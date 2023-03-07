@@ -1,33 +1,63 @@
-const {Schema, model} = require('mongoose');
-const Reaction = require('.Reaction')
+const { Schema, Types, model } = require("mongoose");
 
-const thoughtSchema = new Schema(
-    {
-    thoughtText: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 280,
+// reactionSchema formats the "reactions" subdocument in the thoughtSchema
+const reactionSchema = new Schema({
+    reactionId: {
+      type: Schema.Type.ObjectId,
+      default: new Types.ObjectId(),
     },
-    createdAt: {
-       type: Date,
-       default: Date.now,
-       get: function() {
-        return this.createdAt.toUTCString()
-       },
+    reactionBody: {
+      type: String,
+      required: true,
+      maxlength: 280,
     },
     username: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
-    reactions: [Reaction]
-})
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: function () {
+        return this.createdAt.toUTCString();
+      },
+    },
+  });
 
-thoughtSchema
-    .virtual('reactionCount').get( () => {
-        return length(this.reactions)
-    })
+// thoughtSchema is used to format the "Thought" model
+const thoughtSchema = new Schema(
+  {
+    thoughtText: {
+      type: String,
+      required: true,
+      minlength: 1,
+      maxlength: 280,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: function () {
+        return this.createdAt.toUTCString();
+      },
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    reactions: [reactionSchema],
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
+);
 
-const Thought = model('thought', thoughtSchema);
+thoughtSchema.virtual("reactionCount").get(() => {
+  return this.reactions.length;
+});
+
+const Thought = model("thought", thoughtSchema);
 
 module.exports = Thought;
