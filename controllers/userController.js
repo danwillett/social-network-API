@@ -1,6 +1,7 @@
 const { User, Thought } = require("../models");
 
 module.exports = {
+    // GET route: /api/users
   // get all users
   getUsers(req, res) {
     User.find()
@@ -10,9 +11,10 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  // GET route: /api/users/:userId
   // get a single user by id, and fully populate thoughts and friends fields
   getUserById(req, res) {
-    User.findOne({ _id: req.params.id })
+    User.findOne({ _id: req.params.userId })
       .populate(["thoughts", "friends"])
       .then((user) => {
         !user
@@ -24,6 +26,7 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  // POST route: /api/users
   // create a new user with request body input in following format:
   // {
   //     "username": "lernantino",
@@ -37,10 +40,11 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  // PUT route: /api/users/:userId
   // update a user by request body params
   updateUser(req, res) {
     User.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.userId },
       { $set: req.body }, //set method will only update or create params specified within req.body
       { runValidators: true, new: true }
     )
@@ -54,9 +58,10 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  // DELETE route: /api/users/:userId
   // deletes and user and their thoughts by id
   deleteUser(req, res) {
-    User.findOneAndDelete({ _id: req.params.id })
+    User.findOneAndDelete({ _id: req.params.userId })
       .then((user) => {
         if (!user) {
           res.status(404).json({ message: "No user with that ID" });
@@ -77,7 +82,7 @@ module.exports = {
         res.status(500).json(err);
       });
   },
-  // route: /api/users/:userId/friends/:friendId
+  // POST route: /api/users/:userId/friends/:friendId
   // adds a new friend to user's friend list
   addFriend(req, res) {
     // confirms friend has a profile
@@ -90,7 +95,7 @@ module.exports = {
         } else {
           // adds new friend to user's profile
           User.findOneAndUpdate(
-            { _id: req.params.userid },
+            { _id: req.params.userId },
             { $push: { friends: req.params.friendId } },
             { new: true } // returns updated document after update has applied
           )
@@ -110,7 +115,7 @@ module.exports = {
         res.status(500).json(err);
       });
   },
-  // route: /api/users/:userId/friends/:friendId
+  // DELETE route: /api/users/:userId/friends/:friendId
   // removes a friend from user's friend list
   removeFriend(req, res) {
     User.findOneAndUpdate(
