@@ -11,10 +11,10 @@ module.exports = {
                 res.status(500).json(err)
             })
     },
-    // GET route: /api/thoughts/:_id
+    // GET route: /api/thoughts/:thoughtId
     // get a single thought
     getThoughtById(req, res) {
-        Thought.findOne({_id: req.params.id})
+        Thought.findOne({_id: req.params.thoughtId})
             .then((thought) => {
                 !thought
                     ? res.status(404).json({message: 'No thought with this id'})
@@ -51,6 +51,41 @@ module.exports = {
                 res.status(500).json(err)
             })
     },
+
+    // PUT route: /api/thoughts/:thoughtId
+    // update a thought by id
+    updateThought(req, res) {
+        Thought.findOneAndUpdate(
+            {_id: req.params.thoughtId},
+            {$set: req.body},
+            { runValidators: true, new: true },
+        )
+        .then((thought) => {
+            !thought
+              ? res.status(404).json({ message: "No thought with that ID" })
+              : res.json(thought);
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json(err);
+          });
+    },
+
+    // DELETE route: /api/thoughts/:thoughtId
+    // remove a thought
+    deleteThought(req, res) {
+        Thought.findOneAndDelete({_id: req.params.thoughtId})
+            .then((thought) => {
+                !thought
+                    ? res.status(404).json({message: "No thought with this ID"})
+                    : res.json({message: "Thought deleted"})
+            })
+            .catch((err) => {
+                console.log(err)
+                res.status(500).json(err)
+            })
+    },
+
     // POST route: /api/thoughts/:thoughtId/reactions
     // create a reaction stored in a single thought's reaction array field
     addReaction(req, res) {
