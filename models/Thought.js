@@ -3,7 +3,7 @@ const { Schema, Types, model } = require("mongoose");
 // reactionSchema formats the "reactions" subdocument in the thoughtSchema
 const reactionSchema = new Schema({
     reactionId: {
-      type: Schema.Type.ObjectId,
+      type: Schema.Types.ObjectId,
       default: new Types.ObjectId(),
     },
     reactionBody: {
