@@ -34,7 +34,7 @@ module.exports = {
   // }
   createUser(req, res) {
     User.create(req.body)
-      .then((user) => res.json({ message: "Success! Created new User:" }, user))
+      .then((user) => res.json(user))
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
@@ -69,7 +69,7 @@ module.exports = {
         Thought.deleteMany({ _id: { $in: user.thoughts } }) // $in selects id values specified in user.thoughts array
           .then(() =>
             res.json({
-              message: `User ${req.params.id} deleted along with their thoughts`,
+              message: `User ${req.params.userId} deleted`,
             })
           )
           .catch((err) => {
@@ -94,20 +94,26 @@ module.exports = {
             .json({ message: "Could not find a friend user with that ID" });
         } else {
           // adds new friend to user's profile
-          User.findOneAndUpdate(
-            { _id: req.params.userId },
-            { $push: { friends: req.params.friendId } },
-            { new: true } // returns updated document after update has applied
-          )
-            .then((user) => {
-              !user
-                ? res.status(404).json({ message: "No user with that ID" })
-                : res.json({ message: "Added new friend", user });
-            })
-            .catch((err) => {
-              console.log(err);
-              res.status(500).json(err);
-            });
+          User.findOne
+          if (!user.friends.includes(req.params.friendId)) {
+            User.findOneAndUpdate(
+              { _id: req.params.userId },
+              { $addToSet: { friends: req.params.friendId } },
+              { new: true } // returns updated document after update has applied
+            )
+              .then((user) => {
+                !user
+                  ? res.status(404).json({ message: "No user with that ID" })
+                  : res.json({ message: "Added new friend", user });
+              })
+              .catch((err) => {
+                console.log(err);
+                res.status(500).json(err);
+              });
+          }         
+          else {
+            res.json({message: "They are already a friend!"})
+          }
         }
       })
       .catch((err) => {

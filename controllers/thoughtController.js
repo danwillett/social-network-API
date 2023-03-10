@@ -25,7 +25,7 @@ module.exports = {
                 res.json(err)
             })
     },
-    // POST route: /api/thoughts
+    // POST route: /api/thoughts/
     // {
     //     "thoughtText": "Here's a cool thought...",
     //     "username": "lernantino",
