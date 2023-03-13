@@ -83,9 +83,3 @@ Mongoose: https://mongoosejs.com/
 
 MIT License
 
-
-
-
-
-
-Walk through video: https://drive.google.com/file/d/19vZ4gU2PunnhR522tBwnnQbnF6JzrigC/view
